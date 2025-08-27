@@ -1,0 +1,9 @@
+torch>=2.1
+torchvision>=0.16
+open_clip_torch>=2.24.0
+transformers>=4.43
+pandas>=2.2
+numpy>=1.26
+Pillow>=10.3
+scikit-learn>=1.4
+tqdm>=4.66

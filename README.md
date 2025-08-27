@@ -18,8 +18,12 @@
     git clone https://github.com/kanru-wang/Facebook_Hateful_Meme_Finetune_CLIP_Hate_CLIPper.git
     cd Facebook_Hateful_Meme_Finetune_CLIP_Hate_CLIPper
 
-## 1) (Optional) Install
+## 1) Install requirements.txt and Download Data
     bash env/install.sh
+
+Optional
+
+    bash data/download.sh --target_dir /kaggle/input/facebook-hateful-meme-dataset
 
 ## 2) Data on Kaggle
 Attach **parthplc/facebook-hateful-meme-dataset** to the notebook/script.
