@@ -7,8 +7,8 @@ import pandas as pd
 import numpy as np
 import open_clip
 
-from .datasets import HatefulMemesDataset, make_paths, DATA_DIR_DEFAULT
-from .modeling import HateCLIPMultimodalModel
+from src.datasets import HatefulMemesDataset, make_paths, DATA_DIR_DEFAULT
+from src.modeling import HateCLIPMultimodalModel
 
 
 def parse_args() -> argparse.Namespace:

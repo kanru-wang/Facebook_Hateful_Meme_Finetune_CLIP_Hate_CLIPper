@@ -11,8 +11,8 @@ from sklearn.metrics import roc_auc_score, accuracy_score
 import open_clip
 from tqdm import tqdm
 
-from .datasets import HatefulMemesDataset, make_paths, DATA_DIR_DEFAULT
-from .modeling import HateCLIPMultimodalModel
+from src.datasets import HatefulMemesDataset, make_paths, DATA_DIR_DEFAULT
+from src.modeling import HateCLIPMultimodalModel
 
 
 def parse_args() -> argparse.Namespace:
