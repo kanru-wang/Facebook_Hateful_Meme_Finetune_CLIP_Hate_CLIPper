@@ -41,7 +41,7 @@ It will be mounted under:
 
 ## 3) Train
 
-Run the training script, adjusting `--data_dir_root` and `--output_dir` for Kaggle vs local:
+Run the training script
 
 ### Kaggle
 ```bash
@@ -65,7 +65,8 @@ python -m src.train \
   --epochs 10 \
   --patience 3 \
   --lr 1e-4 \
-  --weight_decay 1e-4
+  --weight_decay 1e-4 \
+  --fp16  # Optional: use if you have GPU with CUDA
 ```
 
 Artifacts:
@@ -76,7 +77,7 @@ Artifacts:
 
 ## 4) Inference
 
-Run the inference script, adjusting `--data_dir_root`, `--checkpoint_path`, and `--out_csv` for Kaggle vs local:
+Run the inference script
 
 ### Kaggle
 ```bash
