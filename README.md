@@ -3,8 +3,6 @@
     Facebook_Hateful_Meme_Finetune_CLIP_Hate_CLIPper/
     ├─ env/
     │  └─ install.sh
-    ├─ data/
-    │  └─ download.sh
     ├─ src/
     │  ├─ datasets.py
     │  ├─ modeling.py
@@ -16,39 +14,91 @@
 ## 0) Clone
 
     git clone https://github.com/kanru-wang/Facebook_Hateful_Meme_Finetune_CLIP_Hate_CLIPper.git
-    cd Facebook_Hateful_Meme_Finetune_CLIP_Hate_CLIPper
 
-## 1) Install requirements.txt and Download Data
-    bash env/install.sh
+## 1) Install requirements.txt
 
-Optional
+    cd Facebook_Hateful_Meme_Finetune_CLIP_Hate_CLIPper && bash env/install.sh
 
-    bash data/download.sh --target_dir /kaggle/input/facebook-hateful-meme-dataset
+## 2) Data
 
-## 2) Data on Kaggle
-Attach **parthplc/facebook-hateful-meme-dataset** to the notebook/script.
-It appears at `/kaggle/input/facebook-hateful-meme-dataset/` and you write to `/kaggle/working`.  
-(“input” is read-only; “working” is read-write.) 
+### On Kaggle
+Attach the dataset `parthplc/facebook-hateful-meme-dataset` in the right panel of your Kaggle notebook or script.  
+It will be mounted under:
+```
+/kaggle/input/facebook-hateful-meme-dataset
+```
+
+###  Locally
+1. Go to the Kaggle dataset page:  
+   https://www.kaggle.com/datasets/parthplc/facebook-hateful-meme-dataset
+2. Manually download the dataset zip.
+3. Unzip it into a folder named `./data` inside this repo, so you get:
+```
+./data/train.jsonl
+./data/dev.jsonl
+./data/img/...
+```
 
 ## 3) Train
-    python -m src.train \
-      --data_dir_root /kaggle/input/facebook-hateful-meme-dataset \
-      --output_dir /kaggle/working/ckpts \
-      --batch_size 16 \
-      --epochs 10 \
-      --patience 3 \
-      --lr 1e-4 \
-      --weight_decay 1e-4 \
-      --fp16
+
+Run the training script, adjusting `--data_dir_root` and `--output_dir` for Kaggle vs local:
+
+### Kaggle
+```bash
+!python -m src.train \
+  --data_dir_root /kaggle/input/facebook-hateful-meme-dataset \
+  --output_dir /kaggle/working/checkpoints \
+  --batch_size 16 \
+  --epochs 10 \
+  --patience 3 \
+  --lr 1e-4 \
+  --weight_decay 1e-4 \
+  --fp16
+```
+
+### Local
+```bash
+python -m src.train \
+  --data_dir_root ./data \
+  --output_dir ./outputs \
+  --batch_size 16 \
+  --epochs 10 \
+  --patience 3 \
+  --lr 1e-4 \
+  --weight_decay 1e-4
+```
 
 Artifacts:
-- `/kaggle/working/ckpts/pytorch_model_best.bin`
-- `/kaggle/working/ckpts/pytorch_model_final.bin`
+- `pytorch_model_best.bin`
+- `pytorch_model_final.bin`
+
+---
 
 ## 4) Inference
-    python -m src.infer \
-      --data_dir_root /kaggle/input/facebook-hateful-meme-dataset \
-      --checkpoint_path /kaggle/working/ckpts/pytorch_model_best.bin \
-      --split dev \
-      --batch_size 64 \
-      --out_csv /kaggle/working/preds.csv
+
+Run the inference script, adjusting `--data_dir_root`, `--checkpoint_path`, and `--out_csv` for Kaggle vs local:
+
+### Kaggle
+```bash
+  !python -m src.infer \
+    --data_dir_root /kaggle/input/facebook-hateful-meme-dataset \
+    --checkpoint_path /kaggle/working/checkpoints/pytorch_model_best.bin \
+    --split dev \
+    --batch_size 64 \
+    --out_csv /kaggle/working/preds.csv
+```
+
+### Local
+```bash
+python -m src.infer \
+  --data_dir_root ./data \
+  --checkpoint_path ./outputs/pytorch_model_best.bin \
+  --split dev \
+  --batch_size 64 \
+  --out_csv ./outputs/preds.csv
+```
+
+This produces a CSV file with:
+- `id`
+- `prob_hate` (predicted probability)
+- `pred_label` (0 or 1)
