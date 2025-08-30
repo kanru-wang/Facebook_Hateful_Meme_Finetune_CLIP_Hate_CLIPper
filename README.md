@@ -46,7 +46,7 @@ Run the training script
 
 ### Kaggle
 ```bash
-!python -m /kaggle/working/Facebook_Hateful_Meme_Finetune_CLIP_Hate_CLIPper/src/train.py \
+!python /kaggle/working/Facebook_Hateful_Meme_Finetune_CLIP_Hate_CLIPper/src/train.py \
   --data_dir_root /kaggle/input/facebook-hateful-meme-dataset \
   --output_dir /kaggle/working/checkpoints \
   --batch_size 16 \
@@ -59,7 +59,7 @@ Run the training script
 
 ### Local
 ```bash
-python -m Facebook_Hateful_Meme_Finetune_CLIP_Hate_CLIPper/src/train.py \
+python Facebook_Hateful_Meme_Finetune_CLIP_Hate_CLIPper/src/train.py \
   --data_dir_root ./data \
   --output_dir ./outputs \
   --batch_size 16 \
@@ -82,17 +82,17 @@ Run the inference script
 
 ### Kaggle
 ```bash
-  !python -m /kaggle/working/Facebook_Hateful_Meme_Finetune_CLIP_Hate_CLIPper/src/infer.py \
-    --data_dir_root /kaggle/input/facebook-hateful-meme-dataset \
-    --checkpoint_path /kaggle/working/checkpoints/pytorch_model_best.bin \
-    --split dev \
-    --batch_size 64 \
-    --out_csv /kaggle/working/preds.csv
+!python /kaggle/working/Facebook_Hateful_Meme_Finetune_CLIP_Hate_CLIPper/src/infer.py \
+  --data_dir_root /kaggle/input/facebook-hateful-meme-dataset \
+  --checkpoint_path /kaggle/working/checkpoints/pytorch_model_best.bin \
+  --split dev \
+  --batch_size 64 \
+  --out_csv /kaggle/working/preds.csv
 ```
 
 ### Local
 ```bash
-python -m Facebook_Hateful_Meme_Finetune_CLIP_Hate_CLIPper/src/infer.py \
+python Facebook_Hateful_Meme_Finetune_CLIP_Hate_CLIPper/src/infer.py \
   --data_dir_root ./data \
   --checkpoint_path ./outputs/pytorch_model_best.bin \
   --split dev \
