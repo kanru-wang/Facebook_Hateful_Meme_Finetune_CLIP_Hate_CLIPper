@@ -1,4 +1,4 @@
-import os
+import os, sys
 import argparse
 
 import torch
@@ -6,6 +6,8 @@ from torch.utils.data import DataLoader
 import pandas as pd
 import numpy as np
 import open_clip
+
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))  # Add repo root to path
 
 from src.datasets import HatefulMemesDataset, make_paths, DATA_DIR_DEFAULT
 from src.modeling import HateCLIPMultimodalModel
