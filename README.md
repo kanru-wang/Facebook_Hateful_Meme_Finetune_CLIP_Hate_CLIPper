@@ -52,21 +52,16 @@ Run the training script
   --patience 3 \
   --lr 1e-4 \
   --weight_decay 1e-4 \
+  --num_workers 2 \
   --fp16
 ```
 
 ### Local
-```bash
-python Facebook_Hateful_Meme_Finetune_CLIP_Hate_CLIPper/src/train.py \
-  --data_dir_root ./data \
-  --output_dir ./outputs \
-  --batch_size 16 \
-  --epochs 10 \
-  --patience 3 \
-  --lr 1e-4 \
-  --weight_decay 1e-4 \
-  --fp16  # Optional: use if you have GPU with CUDA
-```
+
+`python ./src/train.py --data_dir_root ./ --output_dir ./outputs --batch_size 16 --epochs 10  --patience 3 --lr 1e-4
+--weight_decay 1e-4 --num_workers 2 --fp16`
+
+fp16 is optional; use if you have GPU with CUDA
 
 Artifacts:
 - `pytorch_model_best.bin`
@@ -85,18 +80,13 @@ Run the inference script
   --checkpoint_path /kaggle/working/checkpoints/pytorch_model_best.bin \
   --split dev \
   --batch_size 64 \
-  --out_csv /kaggle/working/preds.csv
+  --out_csv /kaggle/working/preds.csv \
+  --num_workers 2
 ```
 
 ### Local
-```bash
-python Facebook_Hateful_Meme_Finetune_CLIP_Hate_CLIPper/src/infer.py \
-  --data_dir_root ./data \
-  --checkpoint_path ./outputs/pytorch_model_best.bin \
-  --split dev \
-  --batch_size 64 \
-  --out_csv ./outputs/preds.csv
-```
+
+`python ./src/infer.py --data_dir_root ./ --checkpoint_path ./outputs/pytorch_model_best.bin --split dev --batch_size 64 --out_csv ./outputs/preds.csv --num_workers 2`
 
 This produces a CSV file with:
 - `id`

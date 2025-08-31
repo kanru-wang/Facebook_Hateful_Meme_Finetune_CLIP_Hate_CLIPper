@@ -1,6 +1,6 @@
 import os, sys
 import argparse
-
+import platform
 import torch
 from torch.utils.data import DataLoader
 import pandas as pd
@@ -20,7 +20,15 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--split", type=str, default="dev", choices=["train", "dev"])
     p.add_argument("--batch_size", type=int, default=64)
     p.add_argument("--out_csv", type=str, default="/kaggle/working/preds.csv")
+    p.add_argument("--num_workers", type=int, default=0 if platform.system() == "Windows" else 2)
     return p.parse_args()
+
+
+def collate_fn(batch):
+    imgs, text_tokens, labels, ids = zip(*batch)
+    imgs = torch.stack(imgs)
+    text_tokens = torch.stack(text_tokens)
+    return imgs, text_tokens, list(ids)
 
 
 @torch.no_grad()
@@ -33,15 +41,23 @@ def main() -> None:
 
     ds = HatefulMemesDataset(jsonl_path, images_dir, image_size=224, is_train=False)
 
-    def collate_fn(batch):
-        imgs, text_tokens, labels, ids = zip(*batch)
-        imgs = torch.stack(imgs)
-        text_tokens = torch.stack(text_tokens)
-        return imgs, text_tokens, ids
+    pin = torch.cuda.is_available()
+    loader = DataLoader(
+        ds,
+        batch_size=args.batch_size,
+        shuffle=False,
+        num_workers=args.num_workers,
+        collate_fn=collate_fn,
+        pin_memory=pin,
+    )
 
-    loader = DataLoader(ds, batch_size=args.batch_size, shuffle=False, num_workers=2, collate_fn=collate_fn)
-
-    clip_model, _, _ = open_clip.create_model_and_transforms("ViT-B-32", pretrained="openai")
+    clip_model, _, _ = open_clip.create_model_and_transforms(
+        model_name="ViT-B-32",
+        pretrained="openai",
+        device=device,
+        # force QuickGELU if checkpoint expects it
+        quick_gelu=True
+    )
     model = HateCLIPMultimodalModel(clip_model).to(device)
 
     state = torch.load(args.checkpoint_path, map_location=device)

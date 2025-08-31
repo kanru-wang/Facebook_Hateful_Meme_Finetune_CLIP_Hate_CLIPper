@@ -1,7 +1,7 @@
 import os, sys
 import argparse
 from typing import Dict, Tuple
-
+import platform
 import torch
 from torch import nn
 from torch.cuda.amp import autocast, GradScaler
@@ -28,6 +28,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--weight_decay", type=float, default=1e-4)
     p.add_argument("--fp16", action="store_true")
     p.add_argument("--seed", type=int, default=42)
+    p.add_argument("--num_workers", type=int, default=0 if platform.system() == "Windows" else 2)
     return p.parse_args()
 
 
@@ -69,6 +70,14 @@ def evaluate(model: nn.Module, loader: DataLoader, criterion: nn.Module, device:
     return avg_loss, metrics
 
 
+def collate_fn(batch):
+    imgs, text_tokens, labels, ids = zip(*batch)
+    imgs = torch.stack(imgs)
+    text_tokens = torch.stack(text_tokens)  # LongTensor [B, T]
+    labels_tensor = None if labels[0] is None else torch.tensor(labels, dtype=torch.float32)
+    return imgs, text_tokens, labels_tensor, list(ids)
+
+
 def main() -> None:
     args = parse_args()
     seed_everything(args.seed)
@@ -82,18 +91,18 @@ def main() -> None:
     train_ds = HatefulMemesDataset(train_path, images_dir, image_size=224, is_train=True)
     val_ds = HatefulMemesDataset(dev_path, images_dir, image_size=224, is_train=False)
 
-    def collate_fn(batch):
-        imgs, text_tokens, labels, ids = zip(*batch)
-        imgs = torch.stack(imgs)
-        text_tokens = torch.stack(text_tokens)  # LongTensor [B, T]
-        labels_tensor = None if labels[0] is None else torch.tensor(labels, dtype=torch.float32)
-        return imgs, text_tokens, labels_tensor, list(ids)
-
-    train_loader = DataLoader(train_ds, batch_size=args.batch_size, shuffle=True, num_workers=2, collate_fn=collate_fn)
-    val_loader = DataLoader(val_ds, batch_size=args.batch_size, shuffle=False, num_workers=2, collate_fn=collate_fn)
+    pin = torch.cuda.is_available()
+    train_loader = DataLoader(train_ds, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers, collate_fn=collate_fn)
+    val_loader = DataLoader(val_ds, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers, collate_fn=collate_fn)
 
     # OpenCLIP ViT-B/32 "openai"
-    clip_model, _, _ = open_clip.create_model_and_transforms("ViT-B-32", pretrained="openai")
+    clip_model, _, _ = open_clip.create_model_and_transforms(
+        model_name="ViT-B-32",
+        pretrained="openai",
+        device=device,
+        # force QuickGELU if checkpoint expects it
+        quick_gelu=True
+    )
     model = HateCLIPMultimodalModel(clip_model).to(device)
 
     optimizer = torch.optim.AdamW(
