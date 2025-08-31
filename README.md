@@ -1,8 +1,6 @@
 # Facebook Hateful Meme Finetune CLIP (Hate-CLIPper)
 
     Facebook_Hateful_Meme_Finetune_CLIP_Hate_CLIPper/
-    ├─ env/
-    │  └─ install.sh
     ├─ src/
     |  ├─ __init__.py
     │  ├─ datasets.py
@@ -18,7 +16,7 @@
 
 ## 1) Install requirements.txt
 
-    cd Facebook_Hateful_Meme_Finetune_CLIP_Hate_CLIPper && bash env/install.sh
+    cd Facebook_Hateful_Meme_Finetune_CLIP_Hate_CLIPper && pip install -r requirements.txt
 
 ## 2) Data
 

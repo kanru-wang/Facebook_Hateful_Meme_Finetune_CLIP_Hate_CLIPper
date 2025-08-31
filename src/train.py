@@ -20,7 +20,7 @@ from src.modeling import HateCLIPMultimodalModel
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Finetune Hate-CLIPper (your notebook logic) on Hateful Memes")
     p.add_argument("--data_dir_root", type=str, default=DATA_DIR_DEFAULT)
-    p.add_argument("--output_dir", type=str, default="/kaggle/working/ckpts")
+    p.add_argument("--output_dir", type=str, default="/kaggle/working/checkpoints")
     p.add_argument("--batch_size", type=int, default=16)
     p.add_argument("--epochs", type=int, default=10)
     p.add_argument("--patience", type=int, default=3)
@@ -92,7 +92,7 @@ def main() -> None:
     train_loader = DataLoader(train_ds, batch_size=args.batch_size, shuffle=True, num_workers=2, collate_fn=collate_fn)
     val_loader = DataLoader(val_ds, batch_size=args.batch_size, shuffle=False, num_workers=2, collate_fn=collate_fn)
 
-    # OpenCLIP ViT-B/32 "openai" — identical to your NB
+    # OpenCLIP ViT-B/32 "openai"
     clip_model, _, _ = open_clip.create_model_and_transforms("ViT-B-32", pretrained="openai")
     model = HateCLIPMultimodalModel(clip_model).to(device)
 
