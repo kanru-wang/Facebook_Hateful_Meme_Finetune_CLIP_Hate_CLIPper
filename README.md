@@ -1,5 +1,14 @@
 # Facebook Hateful Meme Finetune CLIP (Hate-CLIPper)
 
+- Hate-CLIPper: Multimodal Hateful Meme Classification based on Cross-modal Interaction of CLIP Features https://arxiv.org/pdf/2210.05916v3
+- <img src="https://raw.githubusercontent.com/gokulkarthik/hateclipper/refs/heads/main/images/hateclipper.png" width="800"/>
+- The projection layers is to achieve better alignment between the text and image space, i.e. finetune for this specific dataset
+- The FIM representation is obtained by computing the outer product of pi and pt , i.e., R = pi ⊗pt.
+- The FIM can be flattened to get a vector r of length n**2 and passed through a learnable neural network classifier to obtain the final classification decision. We refer to the fusion of text and image features using the FIM as cross-fusion.
+- The sum of these diagonal elements is the dot product between pi and pt, which intuitively measures the alignment (angle) between the two vectors. We refer to the fusion of text and image features using only the diagonal elements of FIM as align-fusion.
+- For low computational resource conditions, it would be appropriate to replace cross-fusion with align-fusion in the Hate-CLIPper framework.
+
+
     Facebook_Hateful_Meme_Finetune_CLIP_Hate_CLIPper/
     ├─ src/
     |  ├─ __init__.py
